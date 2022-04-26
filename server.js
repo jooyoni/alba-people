@@ -30,4 +30,18 @@ app.get('/api/user', (req,res)=>{
         });
 })
 
+app.post('/api/user', (req,res)=>{
+    let sql='INSERT INTO USER VALUES (?,?,?,?,?,?)';
+    let id=req.body.id;
+    let pass=req.body.pass;
+    let name=req.body.name;
+    let birth=req.body.birth;
+    let gender=req.body.gender;
+    let phone=req.body.phone;
+    let params=[id, pass, name, birth, gender, phone];
+    connection.query(sql, params, (err, rows, fields)=>{
+        res.send(err);
+    })
+})
+
 app.listen(port, ()=>console.log(`Listening on port ${port}`))
