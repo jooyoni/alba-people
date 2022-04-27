@@ -44,4 +44,18 @@ app.post('/api/user', (req,res)=>{
     })
 })
 
+app.post('/api/login',(req,res)=>{
+    let sql='SELECT pass FROM USER WHERE id=?';
+    connection.query(sql, req.body.id, (err,rows,fields)=>{
+        let pass;
+        for(var i in rows){
+            pass=rows[i].pass
+        }
+        if(pass==req.body.pw)
+            res.send(true);
+        else
+            res.send(false);
+    })
+})
+
 app.listen(port, ()=>console.log(`Listening on port ${port}`))

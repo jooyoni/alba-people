@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { getUser } from "../api";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { useForm } from "react-hook-form";
 
 const Container=styled.div`
 `;
@@ -72,14 +74,23 @@ const LoginMenu=styled.div`
 `;
 function Login(){
     const {data, isLoading}=useQuery("userInfo", getUser, {staleTime:Infinity, cacheTime:Infinity});
-    console.log(data);
+    const {register,watch} = useForm();
+    const onSubmit=(e)=>{
+        e.preventDefault();
+        const config={
+            headers:{
+                'Content-Type':"application/json"
+            }
+        }
+        axios.post('http://localhost:5000/api/login', JSON.stringify({id:watch().id, pw:watch().pw}), config).then(res=>{if(res.data==true){console.log("login successed")}else{console.log("login failed")}  });
+    }
     return (
         <Container>
             <Contents>
                 <Logo><span>알바프렌드</span></Logo>
-                <Form>
-                    <Id type="text" placeholder="아이디" />
-                    <Pw type="password" placeholder="비밀번호" />
+                <Form onSubmit={onSubmit}>
+                    <Id {...register("id")} type="text" placeholder="아이디" />
+                    <Pw {...register("pw")} type="password" placeholder="비밀번호" />
                     <Btn type="submit">로그인</Btn>
                 </Form>
                 <LoginKeep>
