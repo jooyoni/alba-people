@@ -44,6 +44,7 @@ function InsertMember(){
         if(!passCheck)
             return ;
         addUser(data).catch(err=>console.log(err)).then((res)=>{
+            console.log(res);
             if(res.data==""){
                 navigate("/insertSuccess");
             }
