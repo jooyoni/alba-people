@@ -82,8 +82,19 @@ function Login(){
                 'Content-Type':"application/json"
             }
         }
-        axios.post('http://localhost:5000/api/login', JSON.stringify({id:watch().id, pw:watch().pw}), config).then(res=>{if(res.data==true){console.log("login successed")}else{console.log("login failed")}  });
+        axios.post('http://localhost:5000/api/login', JSON.stringify({id:watch().id, pw:watch().pw}), config).then(res=>{
+            if(res.data==false){
+                console.log("login failed")
+            }
+            else{
+                console.log("login successed",res,data.token);
+                localStorage.setItem("jwtToken",res.data.token)
+            }  
+        });
     }
+    useEffect(()=>{
+        axios.post('http://localhost:5000/api/userConfirm', {token:localStorage.getItem("jwtToken")});
+    },[])
     return (
         <Container>
             <Contents>

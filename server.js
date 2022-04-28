@@ -5,7 +5,8 @@ const cors=require("cors");
 const app=express();
 const port=process.env.PORT || 5000;
 const bcrypt=require('bcryptjs');
-
+const jwt=require("jsonwebtoken");
+require("dotenv").config();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
@@ -47,19 +48,32 @@ app.post('/api/user', async(req,res)=>{
 })
 
 app.post('/api/login',async(req,res)=>{
-    let sql='SELECT pass FROM USER WHERE id=?';
+    let sql='SELECT pass, id FROM USER WHERE id=?';
     const receivedPw = await bcrypt.hash(req.body.pw, 10);
     connection.query(sql, req.body.id, async(err,rows,fields)=>{
-        let pass;
+        let pass, id;
         for(var i in rows){
             pass=rows[i].pass;
+            id=rows[i].id;
         }
-        console.log(pass, receivedPw);
-        if(await bcrypt.compare(req.body.pw, pass))
-            res.send(true);
+        let token = jwt.sign({
+            id: id
+          },
+          process.env.JWT_SECRET ,
+          {
+            expiresIn: '5m'
+          })
+        if(await bcrypt.compare(req.body.pw, pass)){
+            res.json({token:token})
+        }
         else
             res.send(false);
     })
+})
+
+app.post('/api/userConfirm', (req,res)=>{
+    const decoded=jwt.verify(req.body.token, process.env.JWT_SECRET);
+    console.log(decoded);
 })
 
 app.listen(port, ()=>console.log(`Listening on port ${port}`))
