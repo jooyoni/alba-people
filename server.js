@@ -6,11 +6,17 @@ const app=express();
 const port=process.env.PORT || 5000;
 const bcrypt=require('bcryptjs');
 const jwt=require("jsonwebtoken");
+const cookieParser=require("cookie-parser");
 require("dotenv").config();
 
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
-app.use(cors());
+
+app.use(cors({
+    origin: true,  
+    credentials: true,
+    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],}));
 
 const data=fs.readFileSync("./database.json");
 const conf=JSON.parse(data);
@@ -48,27 +54,28 @@ app.post('/api/user', async(req,res)=>{
 })
 
 app.post('/api/login',async(req,res)=>{
-    let sql='SELECT pass, id FROM USER WHERE id=?';
+    let sql='SELECT pass, name, id FROM USER WHERE id=?';
     const receivedPw = await bcrypt.hash(req.body.pw, 10);
-    console.log(req.body.id,req.body.pw)
+
     connection.query(sql, req.body.id, async(err,rows,fields)=>{
-        let pass, id;
+        let pass, name, id;
         for(var i in rows){
             pass=rows[i].pass;
+            name=rows[i].name;
             id=rows[i].id;
         }
         let token = jwt.sign({
-            id: id
+            name:name
           },
           process.env.JWT_SECRET ,
           {
-            expiresIn: '5m'
+            expiresIn: '30m'
           })
         if(id){
             let check=await bcrypt.compare(req.body.pw, pass);
-            console.log(check);
             if(check){
-                res.json({token:token})
+                res.cookie("albaToken",token,{maxAge:1000*60*30});
+                res.json({token:token});
             }
             else
                 res.send(false);
@@ -78,11 +85,13 @@ app.post('/api/login',async(req,res)=>{
     })
 })
 
-app.post('/api/userConfirm', (req,res)=>{
-    const decoded=jwt.verify(req.body.token, process.env.JWT_SECRET,function(err){
-        console.log(err);
-    });
-    
+app.post('/api/userConfirm', async(req,res)=>{
+    try{
+        const decoded=jwt.verify(req.body.token, process.env.JWT_SECRET);
+        console.log(decoded);
+    }catch(e){
+        console.log(e)
+    }
 })
 
 app.listen(port, ()=>console.log(`Listening on port ${port}`))

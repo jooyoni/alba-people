@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useForm } from "react-hook-form";
-
 const Container=styled.div`
 `;
 const Contents=styled.div`
@@ -82,8 +81,8 @@ function Login(){
                 'Content-Type':"application/json"
             }
         }
-        console.log(watch().id, watch().pw)
         axios.post('http://localhost:5000/api/login', JSON.stringify({id:watch().id, pw:watch().pw}), config).then(res=>{
+            console.log(res);
             if(res.data==false||res==false){
                 console.log("login failed")
             }
