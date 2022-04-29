@@ -50,6 +50,7 @@ app.post('/api/user', async(req,res)=>{
 app.post('/api/login',async(req,res)=>{
     let sql='SELECT pass, id FROM USER WHERE id=?';
     const receivedPw = await bcrypt.hash(req.body.pw, 10);
+    console.log(req.body.id,req.body.pw)
     connection.query(sql, req.body.id, async(err,rows,fields)=>{
         let pass, id;
         for(var i in rows){
@@ -63,17 +64,25 @@ app.post('/api/login',async(req,res)=>{
           {
             expiresIn: '5m'
           })
-        if(await bcrypt.compare(req.body.pw, pass)){
-            res.json({token:token})
-        }
+        if(id){
+            let check=await bcrypt.compare(req.body.pw, pass);
+            console.log(check);
+            if(check){
+                res.json({token:token})
+            }
+            else
+                res.send(false);
+            }
         else
             res.send(false);
     })
 })
 
 app.post('/api/userConfirm', (req,res)=>{
-    const decoded=jwt.verify(req.body.token, process.env.JWT_SECRET);
-    console.log(decoded);
+    const decoded=jwt.verify(req.body.token, process.env.JWT_SECRET,function(err){
+        console.log(err);
+    });
+    
 })
 
 app.listen(port, ()=>console.log(`Listening on port ${port}`))
