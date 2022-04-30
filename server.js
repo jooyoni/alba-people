@@ -58,14 +58,13 @@ app.post('/api/login',async(req,res)=>{
     const receivedPw = await bcrypt.hash(req.body.pw, 10);
 
     connection.query(sql, req.body.id, async(err,rows,fields)=>{
-        let pass, name, id;
+        let pass, id;
         for(var i in rows){
             pass=rows[i].pass;
-            name=rows[i].name;
             id=rows[i].id;
         }
         let token = jwt.sign({
-            name:name
+            id:id
           },
           process.env.JWT_SECRET ,
           {
@@ -74,7 +73,7 @@ app.post('/api/login',async(req,res)=>{
         if(id){
             let check=await bcrypt.compare(req.body.pw, pass);
             if(check){
-                res.cookie("albaToken",token,{maxAge:1000*60*30});
+                res.cookie("albaToken",token,{maxAge:1000*60*30, httpOnly:true});
                 res.json({token:token});
             }
             else
@@ -86,12 +85,21 @@ app.post('/api/login',async(req,res)=>{
 })
 
 app.post('/api/userConfirm', async(req,res)=>{
-    try{
-        const decoded=jwt.verify(req.body.token, process.env.JWT_SECRET);
-        console.log(decoded);
-    }catch(e){
-        console.log(e)
+    let sql='SELECT name FROM USER WHERE id=?';
+    let decoded, name;
+    if(req.cookies.albaToken)
+        decoded=jwt.verify(req.cookies.albaToken, process.env.JWT_SECRET);
+    if(decoded){
+        connection.query(sql, decoded.id, (err, rows, fields)=>{
+            for(let i in rows){
+                name=rows[i].name;
+            }
+            res.send(name);
+        }) 
     }
+}) 
+app.get('/api/logout', (req,res)=>{
+    res.clearCookie('albaToken');
+    res.redirect("/");
 })
-
 app.listen(port, ()=>console.log(`Listening on port ${port}`))

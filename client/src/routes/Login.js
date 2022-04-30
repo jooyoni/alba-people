@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import { useEffect } from "react";
 import { getUser } from "../api";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 const Container=styled.div`
@@ -74,6 +74,7 @@ const LoginMenu=styled.div`
 function Login(){
     const {data, isLoading}=useQuery("userInfo", getUser, {staleTime:Infinity, cacheTime:Infinity});
     const {register,watch} = useForm();
+    const navigate=useNavigate();
     const onSubmit=(e)=>{
         e.preventDefault();
         const config={
@@ -88,7 +89,7 @@ function Login(){
             }
             else{
                 console.log("login successed");
-                localStorage.setItem("jwtToken",res.data.token)
+                navigate("/");
             }  
         });
     }
