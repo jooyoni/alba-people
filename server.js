@@ -100,6 +100,6 @@ app.post('/api/userConfirm', async(req,res)=>{
 }) 
 app.get('/api/logout', (req,res)=>{
     res.clearCookie('albaToken');
-    res.redirect("/");
+    res.send("cookie deleted");
 })
 app.listen(port, ()=>console.log(`Listening on port ${port}`))

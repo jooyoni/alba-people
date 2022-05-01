@@ -1,24 +1,68 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
+const Container=styled.div`
+
+`;
+const TopMenu=styled.div`
+    height:60px;
+    display:flex;
+    align-items:center;
+    padding:0 250px;
+    justify-content:space-between;
+`;
+const Logo=styled.div`
+    font-size:28px;
+    font-weight:bold;
+`;
+const MenuList=styled.ul`
+    display:flex;
+    &, li{
+        list-style:none;
+        padding:0;
+    }
+`;
+const Menu=styled.li`
+    font-weight:bold;
+    font-size:17px;
+    margin-left: 20px;
+    cursor: pointer;
+    & >svg{
+        width:15px;
+        margin-right:5px;
+    }
+`;
 function Home(){
-    const [userName, setUserName]=useState("");
+    const [userInfo, setUserInfo]=useState();
     const navigate=useNavigate();
     useEffect(()=>{
         axios.post("http://localhost:5000/api/userConfirm").then((res)=>{
-            setUserName(res.data);
+            setUserInfo(res.data);
         });
     },[])
-    console.log(userName)
+    function logoutClick(){
+        setUserInfo("");
+        axios.get('http://localhost:5000/api/logout');
+    }
+    function loginClick(){
+        navigate("/login");
+    }
     return (
-        <div>
-            {userName?`${userName}님 환영합니다`:null}
-            {userName?<button onClick={()=>{
-                setUserName("");
-                axios.get('http://localhost:5000/api/logout');
-            }}>로그아웃</button>:<button onClick={()=>navigate("/login")}>로그인</button>}
-        </div>
+        <Container>
+            <TopMenu>
+                <Logo>𝗥𝗯𝗮𝗣𝗲𝗼𝗽𝗹𝗲</Logo>
+                <MenuList>
+                    <Menu>게시판</Menu>
+                    <Menu onClick={userInfo?logoutClick:loginClick}>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M224 256c70.7 0 128-57.31 128-128s-57.3-128-128-128C153.3 0 96 57.31 96 128S153.3 256 224 256zM274.7 304H173.3C77.61 304 0 381.6 0 477.3c0 19.14 15.52 34.67 34.66 34.67h378.7C432.5 512 448 496.5 448 477.3C448 381.6 370.4 304 274.7 304z"/></svg>
+                        <span>{userInfo?"LOGOUT":"LOGIN"}</span>
+                    </Menu>
+                </MenuList>
+            </TopMenu>
+            {userInfo?`${userInfo}님 환영합니다`:null}
+        </Container>
     )
 }
 

@@ -9,22 +9,41 @@ const Container=styled.div`
     width:100%;
 `;
 const Content=styled.div`
-    border:1px solid black;
     width:450px;
     margin:0 auto;
+    padding-top:20px;
 `;
 const Form=styled.form`
     & > div > input, & > div > select{
         width:100%;
         box-sizing:border-box;
+        height:40px;
+        font-size:16px;
+        border-radius: 3px;
+        border:1px solid #dfdfdf;
     }
     & > div{
-        height:70px;
+        margin-bottom:10px;
+    }
+    & > button{
+        width:100%;
+        height:40px;
+        font-size:17px;
+        color:white;
+        background-color: #49492a;
+        border:1px solid #dfdfdf;
+        border-radius:3px;
     }
 `;
 const ErrorMsg=styled.div`
     font-size:13px;
     color:red;
+`;
+const Logo=styled.div`
+    font-size:30px;
+    font-weight:900;
+    text-align: center;
+    margin-bottom:30px;
 `;
 function InsertMember(){
     const {register, handleSubmit,watch, formState}=useForm();
@@ -56,9 +75,10 @@ function InsertMember(){
     return (
         <Container>
             <Content>
+                <Logo>𝗥𝗯𝗮𝗣𝗲𝗼𝗽𝗹𝗲</Logo>
                 <Form onSubmit={handleSubmit(onValid)}>
                     <div>
-                    <label htmlFor="id">아이디</label>
+                        <label htmlFor="id">아이디</label>
                         <input { ...register("id",{required:true, pattern:/^[a-z0-9_]{5,20}$/})} type="text" id="id" onBlur={()=>{setOverlapId(false)}} />
                         {formState?.errors.id&&<ErrorMsg>5~20자의 영문 소문자, 숫자와 특수기호(_)만 사용 가능합니다.</ErrorMsg>}
                         {overlapId&&<ErrorMsg>이미 사용중인 아이디입니다.</ErrorMsg>}
@@ -93,7 +113,7 @@ function InsertMember(){
                     </div>
                     <div>
                         <label htmlFor="phone">연락처</label>
-                        <input {...register("phone", {required:true, pattern:/^[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}$/})} type="text" id="phone" />
+                        <input {...register("phone", {required:true, pattern:/^[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}$/})} type="text" id="phone" placeholder="000-0000-0000" />
                         {formState?.errors.phone&&<ErrorMsg>전화번호가 올바르지 않습니다.</ErrorMsg>}
                     </div>
                     <button>회원가입</button>
