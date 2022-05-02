@@ -2,15 +2,19 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import LoginInfo from "../components/LoginInfo";
+import LogoutInfo from "../components/LogoutInfo";
+import Post from "../components/Post";
 
 const Container=styled.div`
 
 `;
 const TopMenu=styled.div`
+    margin:0 auto;
     height:60px;
     display:flex;
     align-items:center;
-    padding:0 250px;
+    width:1050px;
     justify-content:space-between;
 `;
 const Logo=styled.div`
@@ -34,6 +38,40 @@ const Menu=styled.li`
         margin-right:5px;
     }
 `;
+const Content=styled.div`
+    width:1050px;
+    border:1px solid red;
+    height:100vh;
+    margin:0 auto;
+    display:flex;
+`;
+const Left=styled.div`
+    width:70%;
+    border:1px solid gold;
+`;
+const Right=styled.div`
+    width:30%;
+    border:1px solid gold;
+`;
+const PostList=styled.div`
+    & > div{
+        position:relative;
+    }
+    & > div::after{
+        content:"";
+        display:block;
+        border-top:1px solid #dfdfdf;
+        position:absolute;
+        bottom:0;
+        left:0;
+        width:100%;
+    }
+`;
+const UserInfo=styled.div`
+
+`;
+
+const post=[{id:1, img:null, title:"이이이잉",writer:"김영준", writeTime:"13:50"},{id:2, img:null, title:"싱글벙글",writer:"박수빈", writeTime:"21:23"}]
 function Home(){
     const [userInfo, setUserInfo]=useState();
     const navigate=useNavigate();
@@ -61,7 +99,22 @@ function Home(){
                     </Menu>
                 </MenuList>
             </TopMenu>
-            {userInfo?`${userInfo}님 환영합니다`:null}
+            <Content>
+                <Left>
+                    <PostList>
+                        {post.map((item)=>{
+                            return (
+                                <Post key={item.key} img={item.img} title={item.title} writeTime={item.writeTime} writer={item.writer}></Post>
+                            )
+                        })}
+                    </PostList>
+                </Left>
+                <Right>
+                    <UserInfo>
+                        {userInfo?<LoginInfo />:<LogoutInfo />}
+                    </UserInfo>
+                </Right>
+            </Content>
         </Container>
     )
 }
