@@ -1,10 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import LoginInfo from "../components/LoginInfo";
 import LogoutInfo from "../components/LogoutInfo";
 import Post from "../components/Post";
+import PostList from "../components/PostList";
+import SelectBoard from "../components/SelectBoard";
 
 const Container=styled.div`
 
@@ -40,41 +42,33 @@ const Menu=styled.li`
 `;
 const Content=styled.div`
     width:1050px;
-    border:1px solid red;
     height:100vh;
     margin:0 auto;
     display:flex;
+    justify-content: space-between;
+    margin-top:20px;
 `;
 const Left=styled.div`
-    width:70%;
-    border:1px solid gold;
+    width:68%;
 `;
 const Right=styled.div`
-    width:30%;
-    border:1px solid gold;
-`;
-const PostList=styled.div`
-    & > div{
-        position:relative;
-    }
-    & > div::after{
-        content:"";
-        display:block;
-        border-top:1px solid #dfdfdf;
-        position:absolute;
-        bottom:0;
-        left:0;
-        width:100%;
-    }
+    width:28%;
 `;
 const UserInfo=styled.div`
 
 `;
 
-const post=[{id:1, img:null, title:"이이이잉",writer:"김영준", writeTime:"13:50"},{id:2, img:null, title:"싱글벙글",writer:"박수빈", writeTime:"21:23"}]
+const post=[{id:1, img:null, title:"이이이잉",writer:"김영준", writeTime:"13:50"},{id:2, img:null, title:"싱글벙글",writer:"박수빈", writeTime:"21:23"},
+{id:3, img:null, title:"김영준, 교통사고 당해 입원",writer:"박수빈", writeTime:"20:23"},{id:4, img:null, title:"박수빈, 음주운전 사고내고 뺑소니",writer:"박수빈", writeTime:"21:23"},
+{id:5, img:null, title:"이주연 카카오 최종합격",writer:"박수빈", writeTime:"12:15"},{id:6, img:null, title:"이주연vs김영준,박수빈 현피",writer:"박수빈", writeTime:"21:23"},
+{id:7, img:null, title:"이주연 심경 고백 \"서브웨이, 햄버거 먹을 때마다 죽고싶어...\"",writer:"박수빈", writeTime:"19:23"},{id:8, img:null, title:"꾸꾸까까",writer:"박수빈", writeTime:"21:23"},
+{id:9, img:null, title:"김영준, 사망",writer:"박수빈", writeTime:"21:23"},{id:10, img:null, title:"박수빈, 친구 살해혐의 구속",writer:"박수빈", writeTime:"21:23"},
+{id:11, img:null, title:"김영준, 등록금 분실",writer:"박수빈", writeTime:"21:23"},{id:12, img:null, title:"박수빈, 통장에 의문의 330만원 입금",writer:"박수빈", writeTime:"21:23"},
+{id:13, img:null, title:"이주연, 로또 1등 당첨... 실수령액 42억",writer:"박수빈", writeTime:"21:23"},{id:14, img:null, title:"칭챙총",writer:"박수빈", writeTime:"21:23"}]
 function Home(){
     const [userInfo, setUserInfo]=useState();
     const navigate=useNavigate();
+    const location=useLocation();
     useEffect(()=>{
         axios.post("http://localhost:5000/api/userConfirm").then((res)=>{
             setUserInfo(res.data);
@@ -101,17 +95,12 @@ function Home(){
             </TopMenu>
             <Content>
                 <Left>
-                    <PostList>
-                        {post.map((item)=>{
-                            return (
-                                <Post key={item.key} img={item.img} title={item.title} writeTime={item.writeTime} writer={item.writer}></Post>
-                            )
-                        })}
-                    </PostList>
+                    <SelectBoard />
+                    <Outlet />
                 </Left>
                 <Right>
                     <UserInfo>
-                        {userInfo?<LoginInfo />:<LogoutInfo />}
+                        {userInfo?<LoginInfo userName={userInfo} />:<LogoutInfo />}
                     </UserInfo>
                 </Right>
             </Content>

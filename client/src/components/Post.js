@@ -31,7 +31,6 @@ const Info=styled.div`
     }
 `;
 function Post(props){
-    console.log(props);
     return (
         <Container>
             <div>

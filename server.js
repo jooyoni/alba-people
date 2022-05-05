@@ -83,7 +83,6 @@ app.post('/api/login',async(req,res)=>{
             res.send(false);
     })
 })
-
 app.post('/api/userConfirm', async(req,res)=>{
     let sql='SELECT name FROM USER WHERE id=?';
     let decoded, name;
@@ -102,4 +101,16 @@ app.get('/api/logout', (req,res)=>{
     res.clearCookie('albaToken');
     res.send("cookie deleted");
 })
+
+
+
+//게시글 관련
+app.get('/api/post/:category', (req,res)=>{
+    const params=req.params;
+    let sql=`SELECT * FROM ${req.params.category}`;
+    connection.query(sql, (err,rows, fileds)=>{
+        res.send(rows);
+    })
+})
+
 app.listen(port, ()=>console.log(`Listening on port ${port}`))
