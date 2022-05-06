@@ -86,8 +86,14 @@ app.post('/api/login',async(req,res)=>{
 app.post('/api/userConfirm', async(req,res)=>{
     let sql='SELECT name FROM USER WHERE id=?';
     let decoded, name;
-    if(req.cookies.albaToken)
-        decoded=jwt.verify(req.cookies.albaToken, process.env.JWT_SECRET);
+    if(req.cookies.albaToken){
+        try{
+            decoded=jwt.verify(req.cookies.albaToken, process.env.JWT_SECRET);
+        }catch(e){
+            res.send(null);
+        }
+    }
+    
     if(decoded){
         connection.query(sql, decoded.id, (err, rows, fields)=>{
             for(let i in rows){
@@ -102,12 +108,23 @@ app.get('/api/logout', (req,res)=>{
     res.send("cookie deleted");
 })
 
+//권한 확인
+app.get('/api/tokenConfirm', (req,res)=>{
+    let decoded;
+    if(req.cookies.albaToken){
+        try{
+            decoded=jwt.verify(req.cookies.albaToken, process.env.JWT_SECRET);
+        }catch(e){
+            decoded="";
+        }
+    }
+    res.send(decoded);
+})
 
 
 //게시글 관련
-app.get('/api/post/:category', (req,res)=>{
-    const params=req.params;
-    let sql=`SELECT * FROM ${req.params.category} ORDER BY time DESC LIMIT 0, 15`;
+app.get('/api/post/:category/:page', (req,res)=>{
+    let sql=`SELECT * FROM ${req.params.category} ORDER BY time DESC LIMIT ${(Number(req.params.page)-1)*15}, 15`;
     connection.query(sql, (err,rows, fileds)=>{
         res.send(rows);
     })
@@ -115,6 +132,12 @@ app.get('/api/post/:category', (req,res)=>{
 app.get('/api/postLength/:category', (req,res)=>{
     let sql=`SELECT COUNT(*) FROM ${req.params.category}`;
     connection.query(sql, (err,rows, fileds)=>{
+        res.send(rows);
+    })
+})
+app.get('/api/postInfo/:category/:id', (req,res)=>{
+    let sql=`select * from ${req.params.category} where id=${req.params.id}`;
+    connection.query(sql, (err,rows, fields)=>{
         res.send(rows);
     })
 })

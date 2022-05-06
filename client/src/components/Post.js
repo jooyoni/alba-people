@@ -1,3 +1,4 @@
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 const Container=styled.div`
@@ -15,8 +16,10 @@ const Img=styled.img`
     width:70px;
     height:50px;
     margin-right:5px;
+    cursor: pointer;
 `;
 const Title=styled.div`
+    cursor: pointer;
     font-weight:bold;
 `;
 const Info=styled.div`
@@ -31,11 +34,15 @@ const Info=styled.div`
     }
 `;
 function Post(props){
+    const navigate=useNavigate();
+    const PostClick=()=>{
+        navigate(`/postDetail/${props.category}/${props.id}`)
+    }
     return (
         <Container>
-            <div>
-                <Img src={props.img}></Img>
-                <Title>{props.title}</Title>
+            <div >
+                <Img onClick={PostClick} src={props.img}></Img>
+                <Title onClick={PostClick}>{props.title}</Title>
             </div>
             <Info>{props.writer}<div></div>{props.writeTime}</Info>
         </Container>

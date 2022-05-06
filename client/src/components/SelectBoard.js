@@ -6,6 +6,7 @@ const Container=styled.div`
     width:100%;
     display:flex;
     justify-content: space-between;
+    margin-bottom:20px;
 `;
 const JobCategory=styled.button`
     border-radius:10px;
@@ -24,7 +25,7 @@ function SelectBoard(){
     const {pathname:location}=useLocation();
     const {postCategory:params}=useParams();
     function onClick(link){
-        navigate(`/${link}`);
+        navigate(`/${link}/1`);
     }
     return (
     <Container>
