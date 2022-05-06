@@ -21,8 +21,12 @@ const PostLists=styled.div`
         display:none;
     }
 `;
+const PageSelect=styled.div`
+
+`;
 function PostList(){
     const [post, setPost]=useState([]);
+    const [postLength, setPostLength]=useState(0);
     const location=useLocation();
     const {postCategory:params}=useParams();
     useEffect(()=>{
@@ -30,13 +34,24 @@ function PostList(){
             setPost(res.data);
         });
     },[params]);
+    useEffect(()=>{
+        axios.get(`http://localhost:5000/api/postLength/${params}`).then((res)=>{
+            setPostLength(res.data[0]['COUNT(*)']/15);
+        })
+    },[])
+    console.log(postLength);
     return (
         <PostLists>
-            {[...post].reverse().map((item)=>{
+            {post.map((item)=>{
                 return (
                     <Post key={item.id} img={item.img} title={item.title} writeTime={item.time} writer={item.writer}></Post>
                 )
             })}
+            <PageSelect>
+                <span>이전</span>
+                <div></div>
+                <span>다음</span>
+            </PageSelect>
         </PostLists>
     )
 }

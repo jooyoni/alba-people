@@ -1,9 +1,8 @@
+import axios from "axios";
 import styled from "styled-components";
 
 const Container=styled.div`
-    margin-top:10px;
     width:100%;
-    height:100px;
     display:flex;
     flex-direction: column;
     align-items: center;
@@ -17,15 +16,17 @@ const Info=styled.div`
     height:70px;
     margin:0 auto;
     display:flex;
+    margin-top:10px;
 `;
 const ProfileImg=styled.img`
     width:55px;
     height:55px;
     border-radius:50%;
-    margin-right:5px;
+    margin-right:10px;
 `;
 
-function LoginInfo({userName}){
+function LoginInfo({userName, logout}){
+
     return (
         <Container>
             <Info>
@@ -35,7 +36,7 @@ function LoginInfo({userName}){
 
                 </div>
             </Info>
-            <button>로그아웃</button>
+            <button onClick={logout}>로그아웃</button>
         </Container>
     );
 }

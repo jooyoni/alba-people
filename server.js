@@ -107,10 +107,15 @@ app.get('/api/logout', (req,res)=>{
 //게시글 관련
 app.get('/api/post/:category', (req,res)=>{
     const params=req.params;
-    let sql=`SELECT * FROM ${req.params.category}`;
+    let sql=`SELECT * FROM ${req.params.category} ORDER BY time DESC LIMIT 0, 15`;
     connection.query(sql, (err,rows, fileds)=>{
         res.send(rows);
     })
 })
-
+app.get('/api/postLength/:category', (req,res)=>{
+    let sql=`SELECT COUNT(*) FROM ${req.params.category}`;
+    connection.query(sql, (err,rows, fileds)=>{
+        res.send(rows);
+    })
+})
 app.listen(port, ()=>console.log(`Listening on port ${port}`))
