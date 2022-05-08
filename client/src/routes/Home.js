@@ -26,7 +26,6 @@ const Logo=styled.div`
 
 const Content=styled.div`
     width:1050px;
-    height:100vh;
     margin:0 auto;
     display:flex;
     justify-content: space-between;

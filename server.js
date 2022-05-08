@@ -141,4 +141,8 @@ app.get('/api/postInfo/:category/:id', (req,res)=>{
         res.send(rows);
     })
 })
+app.post('/api/insertPost', (req,res)=>{
+    console.log(req.body.category, req.body.title, req.body.content);
+    res.send("d");
+})
 app.listen(port, ()=>console.log(`Listening on port ${port}`))
