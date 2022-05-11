@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(cors({
     origin: true,  
     credentials: true,
-    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],}));
+    methods: ['POST', 'PUT', 'GET', 'DELETE', 'OPTIONS', 'HEAD'],}));
 
 const data=fs.readFileSync("./database.json");
 const conf=JSON.parse(data);
@@ -92,16 +92,18 @@ app.post('/api/userConfirm', async(req,res)=>{
         }catch(e){
             res.send(null);
         }
+    }else{
+        res.send(null)
     }
-    
     if(decoded){
         connection.query(sql, decoded.id, (err, rows, fields)=>{
             for(let i in rows){
                 name=rows[i].name;
             }
-            res.send(name);
+            res.send([name, decoded.id]);
         }) 
     }
+    
 }) 
 app.get('/api/logout', (req,res)=>{
     res.clearCookie('albaToken');
@@ -145,6 +147,19 @@ app.post('/api/insertPost', (req,res)=>{
     let sql=`insert into ${req.body.category} values(?,?,?,?,?,?)`
     let params=[null, `${req.body.title}`, null, `${req.body.content}`, `${req.body.date}`, `${req.body.writer}`]
     connection.query(sql,params, (err,rows, fields)=>{
+        res.send(rows);
+    })
+})
+app.put('/api/updatePost', (req,res)=>{
+    let sql=`update ${req.body.category} set title='${req.body.title}', content='${req.body.content}' where id=${req.body.id}`;
+    connection.query(sql, (err, rows, fields)=>{
+        console.log(err);
+        res.send(rows);
+    })
+})
+app.delete('/api/deletePost/:category/:id', (req, res)=>{
+    let sql=`delete from ${req.params.category} where id=${req.params.id}`;
+    connection.query(sql, (err, rows, fields)=>{
         res.send(rows);
     })
 })

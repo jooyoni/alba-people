@@ -1,5 +1,6 @@
 import {BrowserRouter as Router, Routes, Route, BrowserRouter} from "react-router-dom";
 import PostList from "./components/PostList";
+import FindIdPw from "./routes/FindIdPw";
 import Home from "./routes/Home";
 import InsertMember from "./routes/InsertMember";
 import InsertSuccess from "./routes/InsertSuccess";
@@ -19,7 +20,9 @@ function App() {
         </Route>
         <Route path="/makePost" element={<Home />}>
           <Route path=":postCategory" element={<MakePost />} />
+          <Route path=":postCategory/:postId" element={<MakePost />} />
         </Route>
+        <Route path="/findIdPw" element={<FindIdPw />} />
         <Route path="/" element={<Home />} >
           <Route path=":postCategory/:page" element={<PostList />} />
         </Route>

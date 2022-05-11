@@ -26,6 +26,10 @@ const Support=styled.div`
     justify-content: space-between;
     & > span{
         font-size:12px;
+        cursor:pointer;
+        &:hover{
+            text-decoration: underline;
+        }
     }
 `;
 function LogoutInfo(){
@@ -34,8 +38,8 @@ function LogoutInfo(){
         <Container>
             <Button onClick={()=>navigate("/login")}>RbaPeople 로그인</Button>
             <Support>
-                <span>아이디 비밀번호 찾기</span>
-                <span>회원가입</span>
+                <span onClick={()=>navigate("/findIdPw")}>아이디 비밀번호 찾기</span>
+                <span onClick={()=>navigate("/insertMember")}>회원가입</span>
             </Support>
         </Container>
     )

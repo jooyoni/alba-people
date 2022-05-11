@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import PostContent from "../components/PostContent";
 import {useNavigate, useParams} from "react-router-dom";
@@ -18,10 +18,23 @@ function MakePost(){
     const [title, setTitle]=useState("");
     const [state, setState] = useState({ text: "" });
     const {postCategory:params}=useParams();
+    const {postId: id}=useParams();
+    console.log(id);
     const navigate=useNavigate();
     const handleChange = value => {
       setState({ text: value });
     };
+    useEffect(()=>{
+        if(id){
+            axios.get(`http://localhost:5000/api/postInfo/${params}/${id}`).then(res=>{
+                console.log(res.data);
+                setTitle(res.data[0].title);
+                setState({text:res.data[0].content})
+            })
+        }
+    },[id])
+
+
     function postWrite(){
         const today=new Date();
         var dateString = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2)  + '-' + ('0' + today.getDate()).slice(-2)+" ";
@@ -44,15 +57,24 @@ function MakePost(){
                     console.log(res);
                 })
             }
+        })        
+    }
+    function updatePost(){
+        const config={
+            headers:{
+                'Content-Type':"application/json"
+            }
+        }
+        axios.put('http://localhost:5000/api/updatePost', JSON.stringify({category:params, id:id, title:title, content:state.text}),config).then(res=>{
+            navigate(`/${params}/1`);
         })
-        
     }
 
     return (
         <Container>
-            <Title placeholder="제목을 입력하세요." onChange={(e)=>setTitle(e.currentTarget.value)}></Title>
+            <Title placeholder="제목을 입력하세요." value={title} onChange={(e)=>setTitle(e.currentTarget.value)}></Title>
             <PostContent handleChange={handleChange} state={state} />
-            <span style={{position:"absolute", bottom:"-100px"}} onClick={postWrite}>등록</span>
+            <span style={{position:"absolute", bottom:"-100px"}} onClick={id?updatePost:postWrite}>등록</span>
         </Container>
     )
 }

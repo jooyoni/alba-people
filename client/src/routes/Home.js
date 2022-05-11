@@ -44,12 +44,17 @@ const UserInfo=styled.div`
 function Home(){
     const [userInfo, setUserInfo]=useState();
     const navigate=useNavigate();
-    const location=useLocation();
+    const {pathname:location}=useLocation();
+
     useEffect(()=>{
         axios.post("http://localhost:5000/api/userConfirm").then((res)=>{
             setUserInfo(res.data);
         });
-    },[])
+    },[]);
+    useEffect(()=>{
+        if(location=="/")
+            navigate("/convenience/1");
+    })
     function logoutClick(){
         setUserInfo("");
         axios.get('http://localhost:5000/api/logout');
@@ -69,7 +74,7 @@ function Home(){
                 </Left>
                 <Right>
                     <UserInfo>
-                        {userInfo?<LoginInfo userName={userInfo} logout={logoutClick} />:<LogoutInfo />}
+                        {userInfo?<LoginInfo userName={userInfo[0]} logout={logoutClick} />:<LogoutInfo />}
                     </UserInfo>
                 </Right>
             </Content>
