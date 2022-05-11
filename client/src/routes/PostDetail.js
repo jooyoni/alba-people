@@ -1,12 +1,12 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
 const Container=styled.div`
     border:1px solid #dfdfdf;
     border-radius:5px;
-    height:500px;
+    min-height:500px;
     padding:0 20px;
 `;
 const PostInfo=styled.div`
@@ -43,9 +43,7 @@ function PostDetail(){
                     <span>{postInfo.time}</span>
                 </Writer>
             </PostInfo>
-            <Content>
-                {postInfo.content}
-            </Content>
+            <Content dangerouslySetInnerHTML={{ __html:postInfo.content }} />
             </>):null}
         </Container>
     );

@@ -124,7 +124,7 @@ app.get('/api/tokenConfirm', (req,res)=>{
 
 //게시글 관련
 app.get('/api/post/:category/:page', (req,res)=>{
-    let sql=`SELECT * FROM ${req.params.category} ORDER BY time DESC LIMIT ${(Number(req.params.page)-1)*15}, 15`;
+    let sql=`SELECT * FROM ${req.params.category} ORDER BY id DESC LIMIT ${(Number(req.params.page)-1)*15}, 15`;
     connection.query(sql, (err,rows, fileds)=>{
         res.send(rows);
     })
@@ -142,7 +142,10 @@ app.get('/api/postInfo/:category/:id', (req,res)=>{
     })
 })
 app.post('/api/insertPost', (req,res)=>{
-    console.log(req.body.category, req.body.title, req.body.content);
-    res.send("d");
+    let sql=`insert into ${req.body.category} values(?,?,?,?,?,?)`
+    let params=[null, `${req.body.title}`, null, `${req.body.content}`, `${req.body.date}`, `${req.body.writer}`]
+    connection.query(sql,params, (err,rows, fields)=>{
+        res.send(rows);
+    })
 })
 app.listen(port, ()=>console.log(`Listening on port ${port}`))

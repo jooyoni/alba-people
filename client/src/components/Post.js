@@ -25,12 +25,13 @@ const Title=styled.div`
 const Info=styled.div`
     font-size:13px;
     color:#dfdfdf;
-    & > div{
+    display:flex;
+    & > div:nth-child(2){
         content:"";
         border-left:1px solid #dfdfdf;
-        height:9px;
+        height:10px;
         align-self: center;
-        margin:0 3px;
+        margin:0 5px;
     }
 `;
 function Post(props){
@@ -44,7 +45,7 @@ function Post(props){
                 <Img onClick={PostClick} src={props.img}></Img>
                 <Title onClick={PostClick}>{props.title}</Title>
             </div>
-            <Info>{props.writer}<div></div>{props.writeTime}</Info>
+            <Info><div>{props.writer}</div><div></div><div>{props.writeTime}</div></Info>
         </Container>
     )
 }

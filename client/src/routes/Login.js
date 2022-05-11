@@ -140,7 +140,7 @@ function Login(){
             }
             else{
                 console.log("login successed");
-                navigate("/");
+                navigate("/convenience/1");
             }  
         });
     }

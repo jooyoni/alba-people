@@ -23,6 +23,10 @@ function MakePost(){
       setState({ text: value });
     };
     function postWrite(){
+        const today=new Date();
+        var dateString = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2)  + '-' + ('0' + today.getDate()).slice(-2)+" ";
+        var timeString = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2)  + ':' + ('0' + today.getSeconds()).slice(-2);
+        console.log(dateString, timeString);
         const config={
             headers:{
                 'Content-Type':'application/json'
@@ -33,11 +37,17 @@ function MakePost(){
                 alert("로그인이 필요한 서비스입니다.");
                 navigate('/login');
             }else{
-                axios.post('http://localhost:5000/api/insertPost',JSON.stringify({category:params, title:title, content:state.text}) ,config)
+                axios.post('http://localhost:5000/api/insertPost',JSON.stringify({category:params, title:title, content:state.text,
+                date:dateString+timeString, writer:res.data.id}) ,config)
+                .then(res=>{
+                    navigate(`/${params}/1`);
+                    console.log(res);
+                })
             }
         })
         
     }
+
     return (
         <Container>
             <Title placeholder="제목을 입력하세요." onChange={(e)=>setTitle(e.currentTarget.value)}></Title>

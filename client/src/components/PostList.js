@@ -59,12 +59,12 @@ function PostList(){
         axios.get(`http://localhost:5000/api/post/${params}/${page}`).then((res)=>{
             setPost(res.data);
         });
-    },[params, page]);
+    },[params, page,location]);
     useEffect(()=>{
         axios.get(`http://localhost:5000/api/postLength/${params}`).then((res)=>{
             setPostLength(res.data[0]['COUNT(*)']/15);
         })
-    },[params, page])
+    },[params, page,location])
     function pageNumber(){
         let array=[];
         for(let i=1;i<=Math.ceil(postLength);i++){
