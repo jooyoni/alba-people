@@ -42,7 +42,7 @@ function Post(props){
     return (
         <Container>
             <div >
-                <Img onClick={PostClick} src={props.img}></Img>
+                <Img onClick={PostClick} src={props.img?`http://localhost:5000/uploads/${props.img}`:null}></Img>
                 <Title onClick={PostClick}>{props.title}</Title>
             </div>
             <Info><div>{props.writer}</div><div></div><div>{props.writeTime}</div></Info>

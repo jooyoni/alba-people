@@ -23,7 +23,10 @@ const Writer=styled.div`
     display:flex;
     flex-direction: column;
 `;
-const Content=styled.div``;
+const Content=styled.div`
+    overflow-x: scroll;
+    
+`;
 const ChangeButton=styled.div`
 `;
 function PostDetail(){

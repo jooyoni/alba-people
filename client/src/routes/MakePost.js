@@ -16,20 +16,22 @@ const Title=styled.input`
 `;
 function MakePost(){
     const [title, setTitle]=useState("");
-    const [state, setState] = useState({ text: "" });
+    const [state, setState] = useState("");
+    const [thumbnail, setThumbnail]=useState("");
     const {postCategory:params}=useParams();
     const {postId: id}=useParams();
-    console.log(id);
     const navigate=useNavigate();
+    const editThumb=(image)=>{
+        setThumbnail(image);
+    }
     const handleChange = value => {
-      setState({ text: value });
+      setState(value);
     };
     useEffect(()=>{
         if(id){
             axios.get(`http://localhost:5000/api/postInfo/${params}/${id}`).then(res=>{
-                console.log(res.data);
                 setTitle(res.data[0].title);
-                setState({text:res.data[0].content})
+                setState(res.data[0].content);
             })
         }
     },[id])
@@ -39,7 +41,6 @@ function MakePost(){
         const today=new Date();
         var dateString = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2)  + '-' + ('0' + today.getDate()).slice(-2)+" ";
         var timeString = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2)  + ':' + ('0' + today.getSeconds()).slice(-2);
-        console.log(dateString, timeString);
         const config={
             headers:{
                 'Content-Type':'application/json'
@@ -50,7 +51,7 @@ function MakePost(){
                 alert("로그인이 필요한 서비스입니다.");
                 navigate('/login');
             }else{
-                axios.post('http://localhost:5000/api/insertPost',JSON.stringify({category:params, title:title, content:state.text,
+                axios.post('http://localhost:5000/api/insertPost',JSON.stringify({category:params, title:title, image:thumbnail, content:state,
                 date:dateString+timeString, writer:res.data.id}) ,config)
                 .then(res=>{
                     navigate(`/${params}/1`);
@@ -65,7 +66,7 @@ function MakePost(){
                 'Content-Type':"application/json"
             }
         }
-        axios.put('http://localhost:5000/api/updatePost', JSON.stringify({category:params, id:id, title:title, content:state.text}),config).then(res=>{
+        axios.put('http://localhost:5000/api/updatePost', JSON.stringify({category:params, id:id, title:title, image:thumbnail, content:state}),config).then(res=>{
             navigate(`/${params}/1`);
         })
     }
@@ -73,8 +74,8 @@ function MakePost(){
     return (
         <Container>
             <Title placeholder="제목을 입력하세요." value={title} onChange={(e)=>setTitle(e.currentTarget.value)}></Title>
-            <PostContent handleChange={handleChange} state={state} />
-            <span style={{position:"absolute", bottom:"-100px"}} onClick={id?updatePost:postWrite}>등록</span>
+            <PostContent handleChange={handleChange} value={state} setValue={handleChange} editThumb={editThumb} />
+            <span style={{position:"absolute", bottom:"-70px"}} onClick={id?updatePost:postWrite}>등록</span>
         </Container>
     )
 }

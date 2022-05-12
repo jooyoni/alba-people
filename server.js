@@ -3,6 +3,8 @@ const express=require("express");
 const bodyParser=require("body-parser");
 const cors=require("cors");
 const app=express();
+const multer = require('multer');
+const path = require('path');
 const port=process.env.PORT || 5000;
 const bcrypt=require('bcryptjs');
 const jwt=require("jsonwebtoken");
@@ -12,12 +14,11 @@ require("dotenv").config();
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
-
 app.use(cors({
     origin: true,  
     credentials: true,
     methods: ['POST', 'PUT', 'GET', 'DELETE', 'OPTIONS', 'HEAD'],}));
-
+app.use(express.static(path.join(__dirname + '/public')));
 const data=fs.readFileSync("./database.json");
 const conf=JSON.parse(data);
 const mysql=require("mysql");
@@ -30,6 +31,30 @@ const connection=mysql.createConnection({
     database:conf.database
 }); 
 connection.connect();
+
+const upload = multer({
+    storage: multer.diskStorage({
+      // 저장할 장소
+      destination(req, file, cb) {
+        cb(null, 'public/uploads');
+      },
+      // 저장할 이미지의 파일명
+      filename(req, file, cb) {
+        const ext = path.extname(file.originalname); // 파일의 확장자
+        // 파일명이 절대 겹치지 않도록 해줘야한다.
+        // 파일이름 + 현재시간밀리초 + 파일확장자명
+        cb(null, path.basename(file.originalname, ext) + Date.now() + ext);
+      },
+    }),
+  });
+app.post('/img', upload.single('img'), (req, res) => {
+    const IMG_URL = `http://localhost:5000/uploads/${req.file.filename}`;
+    res.json({ url: IMG_URL });
+});
+app.get('/', (req, res) => {
+    res.json({ msg: 'OK' });
+  });
+
 
 app.get('/api/user', (req,res)=>{
     connection.query(
@@ -145,13 +170,13 @@ app.get('/api/postInfo/:category/:id', (req,res)=>{
 })
 app.post('/api/insertPost', (req,res)=>{
     let sql=`insert into ${req.body.category} values(?,?,?,?,?,?)`
-    let params=[null, `${req.body.title}`, null, `${req.body.content}`, `${req.body.date}`, `${req.body.writer}`]
+    let params=[null, `${req.body.title}`, `${req.body.image}`, `${req.body.content}`, `${req.body.date}`, `${req.body.writer}`]
     connection.query(sql,params, (err,rows, fields)=>{
         res.send(rows);
     })
 })
 app.put('/api/updatePost', (req,res)=>{
-    let sql=`update ${req.body.category} set title='${req.body.title}', content='${req.body.content}' where id=${req.body.id}`;
+    let sql=`update ${req.body.category} set image='${req.body.image}', title='${req.body.title}', content='${req.body.content}' where id=${req.body.id}`;
     connection.query(sql, (err, rows, fields)=>{
         console.log(err);
         res.send(rows);

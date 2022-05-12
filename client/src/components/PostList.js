@@ -86,7 +86,7 @@ function PostList(){
         <PostLists>
             {post?.map((item)=>{
                 return (
-                    <Post key={item.id} id={item.id} category={params} img={item.img} title={item.title} writeTime={item.time} writer={item.writer}></Post>
+                    <Post key={item.id} id={item.id} category={params} img={item.image} title={item.title} writeTime={item.time} writer={item.writer}></Post>
                 )
             })}
         </PostLists>
