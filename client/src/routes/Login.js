@@ -157,8 +157,8 @@ function Login(){
     useEffect(()=>{
         if(localStorage.getItem("jwtToken"))
             axios.post('http://localhost:5000/api/userConfirm', {token:localStorage.getItem("jwtToken")}); 
-        setValue("id", localStorage.getItem("id"));
-        setValue("pw", localStorage.getItem("pw"));
+        setValue("id", localStorage.getItem("rpId"));
+        setValue("pw", localStorage.getItem("rpPw"));
     },[]);
     return (
         <Container>
