@@ -75,7 +75,7 @@ function PostList(){
         for(let i=pageRange+1;i<=pageRange+10;i++){
             if(i>Math.ceil(postLength))
                 break;
-            array.push(<span key={i} onClick={()=>navigate(`/${params}/${i}`)}>{i}</span>);
+            array.push(<span style={{fontWeight:page==i?"bold":"500"}} key={i} onClick={()=>navigate(`/${params}/${i}`)}>{i}</span>);
         }
         return array;
     }
