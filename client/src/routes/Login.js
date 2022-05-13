@@ -82,7 +82,8 @@ const LoginKeep=styled.span`
     margin:7px 0 10px 0;
     & > div{
         display:flex;
-        border:1px solid black;
+        border:2px solid ${props=>props.selected?"black":"#dfdfdf"};
+        background-color: ${props=>props.selected?"pink":"transparent"};
         border-radius: 50%;
         width:16px;
         height:16px;
@@ -90,6 +91,7 @@ const LoginKeep=styled.span`
         align-items: center;
         & > svg{
             width:12px;
+            fill:${props=>props.selected?"black":"#dfdfdf"};
         }
     }
 `;
@@ -124,10 +126,18 @@ const ErrorMsg=styled.span`
 function Login(){
     const {data, isLoading}=useQuery("userInfo", getUser, {staleTime:Infinity, cacheTime:Infinity});
     const [loginFailed, setLoginFailed]=useState(false);
-    const {register,watch, handleSubmit, formState} = useForm();
+    const [idRemember, setIdRemember]=useState(false);
+    const {register,watch, handleSubmit, formState, setValue} = useForm();
     const navigate=useNavigate();
 
     const onValid=(data)=>{
+        if(idRemember){
+            localStorage.setItem("rpId", watch().id);
+            localStorage.setItem("rpPw", watch().pw);
+        }else{
+            localStorage.removeItem("rpId");
+            localStorage.removeItem("rpPw");
+        }
         const config={
             headers:{
                 'Content-Type':"application/json"
@@ -147,6 +157,8 @@ function Login(){
     useEffect(()=>{
         if(localStorage.getItem("jwtToken"))
             axios.post('http://localhost:5000/api/userConfirm', {token:localStorage.getItem("jwtToken")}); 
+        setValue("id", localStorage.getItem("id"));
+        setValue("pw", localStorage.getItem("pw"));
     },[]);
     return (
         <Container>
@@ -161,9 +173,9 @@ function Login(){
                         <Pw {...register("pw", {required:true})} type="password" placeholder="비밀번호" />
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M80 192V144C80 64.47 144.5 0 224 0C303.5 0 368 64.47 368 144V192H384C419.3 192 448 220.7 448 256V448C448 483.3 419.3 512 384 512H64C28.65 512 0 483.3 0 448V256C0 220.7 28.65 192 64 192H80zM144 192H304V144C304 99.82 268.2 64 224 64C179.8 64 144 99.82 144 144V192z"/></svg>
                     </div>
-                    <LoginKeep>
+                    <LoginKeep onClick={()=>setIdRemember(prev=>!prev)} selected={idRemember}>
                         <div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4C451.1 117.9 451.1 138.1 438.6 150.6L182.6 406.6C170.1 419.1 149.9 419.1 137.4 406.6L9.372 278.6C-3.124 266.1-3.124 245.9 9.372 233.4C21.87 220.9 42.13 220.9 54.63 233.4L159.1 338.7L393.4 105.4C405.9 92.88 426.1 92.88 438.6 105.4H438.6z"/></svg></div>
-                        <span>로그인 상태 유지</span>
+                        <span>아이디 비밀번호 저장</span>
                     </LoginKeep>
                     <ErrorMsg>{formState.errors.id?"아이디를 입력해주세요":formState.errors.pw?"비밀번호를 입력해주세요.":(
                         loginFailed?"아이디 또는 비밀번호를 잘못 입력했습니다.":null

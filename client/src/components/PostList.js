@@ -67,7 +67,14 @@ function PostList(){
     },[params, page,location])
     function pageNumber(){
         let array=[];
-        for(let i=1;i<=Math.ceil(postLength);i++){
+        let pageRange=Number(page);
+        if(pageRange%10==0)
+            pageRange--;
+        while(pageRange%10!=0)
+            pageRange--;
+        for(let i=pageRange+1;i<=pageRange+10;i++){
+            if(i>Math.ceil(postLength))
+                break;
             array.push(<span key={i} onClick={()=>navigate(`/${params}/${i}`)}>{i}</span>);
         }
         return array;
@@ -82,6 +89,12 @@ function PostList(){
             }
         })
     }
+    function beforePage(){
+        navigate(`/${params}/${Number(page)-1}`);
+    }
+    function nextPage(){
+        navigate(`/${params}/${Number(page)+1}`);
+    }
     return (<>
         <PostLists>
             {post?.map((item)=>{
@@ -91,11 +104,11 @@ function PostList(){
             })}
         </PostLists>
         <PageSelect>
-            {Number(page)!==1?<span>이전</span>:null}
+            {Number(page)!==1?<span onClick={beforePage}>이전</span>:null}
             <PageNum>
                 {pageNumber()}
             </PageNum>
-            {Math.ceil(postLength)===Number(page)?null:<span>다음</span>}
+            {Math.ceil(postLength)===Number(page)?null:<span onClick={nextPage}>다음</span>}
         </PageSelect>
         <WrBtn>
             <button onClick={makePost}>글쓰기</button>
